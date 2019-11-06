@@ -1,0 +1,46 @@
+<% include ../partials/header.ejs %>
+<div class="container">
+    <div class="row">
+        <div class="col-md-3">
+            <p class="lead">E-journal (mapa na dole)</p>
+            <div>
+                <li class="list-group"></li>
+                <li class="list-group"></li>
+                <li class="list-group"></li>
+            </div>
+        </div>
+        <div class="col-md-9">
+            <div class="thunbnail">
+                <!-- <img class="img-responsive" src="file://C:/<%= trip.image %>"> -->
+                <img class="img-responsive" src="kkk.png">
+                <div class="pull-right">9.00$/night</div>
+                <h4><a><%= trip.title %></a></h4>
+                <p><%= trip.content %></p>
+                <p>
+                    <em>Submitted By <%= trip.author.username %> </em>
+                </p>
+                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning">Edit trip</a>
+            </div>  
+            <div class="well">  
+                <div class="text-right">
+                    <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">Add New Day(doesnt work)</a>
+                </div> 
+                <hr>           
+                <% trip.days.forEach( (day) => { %>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <strong><%= day.author.username %></strong>
+                            <span class="pull-right">10 days ago</span> 
+                            <p>
+                                <%= day.text %>
+                            </p>
+                        </div>
+                    </div>
+                <% }) %>   
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<% include ../partials/footer.ejs %>
