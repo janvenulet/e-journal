@@ -2,7 +2,7 @@ var express = require("express");
 var router = express.Router();
 var Trip = require("../models/trip");
 var multer = require("multer");
-var uploadsPath = "\\Users\\Jan\\Documents\\Praca dyplomowa\\Projekt\\uploads";
+var uploadsPath = "\\Users\\Jan\\Documents\\Praca dyplomowa\\Projekt\\public\\uploads"; //tu może zamienić na './public/uploads'
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, uploadsPath)
@@ -11,16 +11,26 @@ var storage = multer.diskStorage({
       cb(null, file.originalname); // tu wstawić login i tytuł tripa
     }
   });
+
+router.use(express.static('./public'));
    
 var upload = multer({ storage: storage })
 
 router.get("/", (req,res) => {
     Trip.find({}, (err, trips) => {
+        var images = [];
         if (err){
             console.log(err);
         } else {
             trips.forEach( (trip) => {
-                res.sendFile("\\Users\\Jan\\Pictures\\kkk.png");
+                images.push(`uploads/${trip.image}`);
+                // console.log(__dirname + "\\uploads\\kkk.png");
+                // res.sendFile(__dirname + "\\..\\uploads\\IMG_4717.JPG", (err) => {
+                //     if (err) {
+                //         console.log(err);
+                //     }
+                //     res.render("trips/index", {trips:trips});
+                // });
                 // var options = {
                 //     root: __dirname + 'uploads',
                 //     dotfiles: 'deny',
@@ -38,8 +48,8 @@ router.get("/", (req,res) => {
                 //     }
                 // });
             });
-            res.render("trips/index", {trips:trips});
-        }
+        };
+        res.render("trips/index", {trips:trips, images: images});
     });
 });
 
@@ -49,11 +59,11 @@ router.get("/new", //isLoggedIn,
 });
 
 router.get("/:id", (req,res) => {
-    Trip.findById(req.params.id).populate("day").exec( (err, foundTrip) => {
+    Trip.findById(req.params.id).populate("day").exec((err, trip) => {
             if (err){
                 console.log(err);
             } else {
-                res.render("trips/show", {trip : foundTrip});
+                res.render("trips/show", {trip : trip, image: `uploads/${trip.image}`});
             }
     });
 })
@@ -64,7 +74,7 @@ router.post("/", upload.single('avatar'), // isLoggedIn,
     console.log(req.file);
     var title = req.body.title;
     var description = req.body.description;
-    var image = req.file.path;
+    var image = req.file.originalname; //tu path może zamienić
     var newTrip = {title: title, description: description, image: image}
     Trip.create(newTrip, (err,newlyCreated) => {
         if (err) {

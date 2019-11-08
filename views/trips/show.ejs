@@ -11,11 +11,11 @@
         </div>
         <div class="col-md-9">
             <div class="thunbnail">
-                <!-- <img class="img-responsive" src="file://C:/<%= trip.image %>"> -->
-                <img class="img-responsive" src="kkk.png">
-                <div class="pull-right">9.00$/night</div>
+                <!-- <img class="img-responsive" src="<%= trip.title %>"> -->
+                <img class="img-responsive" src="<%= typeof image != 'undefined' ? image : '' %>">
+                <!-- <div class="pull-right">9.00$/night</div> Tu można dać date stworzenia-->
                 <h4><a><%= trip.title %></a></h4>
-                <p><%= trip.content %></p>
+                <p><%= trip.description %></p>
                 <p>
                     <em>Submitted By <%= trip.author.username %> </em>
                 </p>

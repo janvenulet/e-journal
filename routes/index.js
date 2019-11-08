@@ -12,21 +12,28 @@ router.get("/register", (req, res) => {
 });
 
 
-router.post("/login", passport.authenticate("local", 
+router.post("/register", passport.authenticate("local", 
     {
-        successRedirect: "/campgrounds",
+        successRedirect: "/trips",
         failureRedirect: "/login"
     }), (req, res) => {
-    User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
-        if (err){
-            console.log(err);
-            res.render("login");
-        } else { 
-            passport.authenticate("local")(req, res, () => {
-                res.redirect("/campgrounds");
-            }); 
-        }
-    });
+        new user = new User ({
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+        }); 
+    
+
+    // User.register(new User({username: req.body.username}), req.body.password, (err, user) => {
+    //     if (err){
+    //         console.log(err);
+    //         res.render("login");
+    //     } else { 
+    //         passport.authenticate("local")(req, res, () => {
+    //             res.redirect("/campgrounds");
+    //         }); 
+    //     }
+    // });
 });
 
 router.get("/login", (req, res) => {

@@ -20,10 +20,10 @@ const mongoURI = "mongodb://localhost:27017/e-journal";
 
 mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true});
 app.set("view engine", "ejs");
-app.set(express.static(__dirname + "/public"));
+app.set(express.static(__dirname + "./public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.set(methodOverride('_method'));
-seedDB();
+//seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
