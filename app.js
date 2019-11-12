@@ -3,15 +3,16 @@ var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 var app = express();
 var mongoose = require("mongoose");
+var cookieParser = require("cookie-parser");
 //var passport = require("passport");
 //var LocalStrategy = require("passport-local");
 
 var Trip = require("./models/trip");
-var Comment = require("./models/day.js");
+var Day = require("./models/day.js");
 var User = require("./models/user.js");
 var seedDB = require("./seeds");
 
-var commentRoutes = require("./routes/comments");
+var dayRoutes = require("./routes/days");
 var tripRoutes = require("./routes/trips");
 var authRoutes = require("./routes/index");
 
@@ -22,8 +23,9 @@ mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true});
 app.set("view engine", "ejs");
 app.set(express.static(__dirname + "./public"));
 app.use(bodyParser.urlencoded({extended: true}));
+app.use(cookieParser());
 app.set(methodOverride('_method'));
-//seedDB();
+seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({
@@ -43,7 +45,7 @@ app.use(function(req, res, next) {
     next();
 });
 
-app.use("/trips/:id/days",commentRoutes);
+app.use("/trips/:id/days", dayRoutes);
 app.use("/trips", tripRoutes); //all routes should start with /trips
 app.use(authRoutes);
 

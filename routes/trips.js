@@ -1,7 +1,9 @@
 var express = require("express");
 var router = express.Router();
 var Trip = require("../models/trip");
+var User = require("../models/user");
 var multer = require("multer");
+var verifyToken = require('./verifyToken');
 var uploadsPath = "\\Users\\Jan\\Documents\\Praca dyplomowa\\Projekt\\public\\uploads"; //tu może zamienić na './public/uploads'
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -53,36 +55,42 @@ router.get("/", (req,res) => {
     });
 });
 
-router.get("/new", //isLoggedIn,
+router.get("/new", verifyToken,
  (req,res) => {
     res.render("trips/new.ejs");
+    //var author = req.user._id;
+    //console.log(author);
 });
 
 router.get("/:id", (req,res) => {
-    Trip.findById(req.params.id).populate("day").exec((err, trip) => {
+    Trip.findById(req.params.id).populate("days").populate("author").exec((err, trip) => {
             if (err){
                 console.log(err);
             } else {
-                res.render("trips/show", {trip : trip, image: `uploads/${trip.image}`});
-            }
+                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`});
+            };
     });
-})
+});
 
 
-router.post("/", upload.single('avatar'), // isLoggedIn,
+router.post("/", upload.single('avatar'), verifyToken,
  (req, res, next) => {
-    console.log(req.file);
+    //console.log(req.file);
     var title = req.body.title;
     var description = req.body.description;
     var image = req.file.originalname; //tu path może zamienić
-    var newTrip = {title: title, description: description, image: image}
-    Trip.create(newTrip, (err,newlyCreated) => {
-        if (err) {
-            console.log(err);
-        } else {
-            console.log(newlyCreated);
-            res.redirect("/trips");
-        };
+    User.findById(req.user._id, (err, author) => {
+        //console.log(author._id);
+        var newTrip = {title: title, description: description, image: image, author: author._id}
+        console.log(newTrip);
+        Trip.create(newTrip, (err,newlyCreated) => {
+            if (err) {
+                console.log(err);
+            } else {
+               //console.log(newlyCreated);
+                res.redirect("/trips");
+            };
+        });
     });
 });
 
@@ -93,7 +101,7 @@ router.get("/:id/edit", (req,res) => {
                 console.log(err);
             } else {
                 res.render("trips/edit", {trip : foundTrip});
-            }
+            };
     });
 });
 
@@ -117,5 +125,3 @@ function isLoggedIn(req, res, next) {
 };
 
 module.exports = router; 
-
-//<form method="POST" action="/campgrounds/<%= campground._id %>?_method=PUT">

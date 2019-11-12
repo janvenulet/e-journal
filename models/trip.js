@@ -5,11 +5,11 @@ var tripSchema = new mongoose.Schema({
     description: String,
     image: String,
     author: {
-        id: {
+ //       id: {
             type: mongoose.Schema.Types.ObjectId,
             ref: "User"
-        },
-        username: String
+//       },
+//        username: String
     },
     days : [ 
         {

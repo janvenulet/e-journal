@@ -1,0 +1,22 @@
+<% include ../partials/header.ejs %>
+<div class="container">
+    <div class="row">    
+        <h2 style="text-align: center;"> Add new day to <%= trip.title %></h2>
+        <div style="width: 30%; margin: 40px auto;">
+            <form action="/trips/<%= trip.id %>/days" method="POST">
+                <div class="form-group">
+                        <input class="form-control" type="text" name="day[location]" placeholder="Location">
+                </div>
+                <div class="form-group">
+                        <input class="form-control" type="text" name="day[text]" placeholder="Your expiriences...">
+                </div>
+                <div class="form-group">                     
+                    <button class="btn btn-lg btn-primary btn-block" type="submit">Submit! </button>
+                </div>
+            </form>
+            <a href="/trips">Go back</a>
+        </div>
+    </div>   
+</div>
+
+<% include ../partials/footer.ejs %>

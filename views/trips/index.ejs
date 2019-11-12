@@ -4,8 +4,8 @@
 <div class="container">
     <header class="jumbotron">
         <div class="container">
-            <h1>This is a campground page</h1>
-            <p>View our hand-picked campgounds from USA. Best of them!</p>
+            <h1>This is a e-journal page</h1>
+            <p>Write your best trip's stories to make sure it will last with you forverer.</p>
             <p>
                 <a class="btn btn-lg btn-primary" href="/trips/new">Add new trip to your journal</a>
             </p>
@@ -22,10 +22,9 @@
             <div class="col-md-3 col-sm-6">
                 <div class="thumbnail">     
                     <img src="<%= typeof images[it] != 'undefined' ? images[it] : '' %>">
-                    <!-- <img src="kkk.png"> -->
                     <div class="caption">
                         <h4> <%= trip.title %> </h4>
-                    </div>     
+                    </div>
                     <p>
                         <a href="/trips/<%= trip._id %>" class="btn btn-primary">More Info</a>
                     </p>
