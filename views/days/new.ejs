@@ -5,10 +5,17 @@
         <div style="width: 30%; margin: 40px auto;">
             <form action="/trips/<%= trip.id %>/days" method="POST">
                 <div class="form-group">
-                        <input class="form-control" type="text" name="day[location]" placeholder="Location">
+                        <input class="form-control" type="text" name="day[location]" placeholder="Location" required>
                 </div>
                 <div class="form-group">
-                        <input class="form-control" type="text" name="day[text]" placeholder="Your expiriences...">
+                        <input class="form-control" type="text" name="day[text]" placeholder="Your expiriences..." required>
+                </div>
+                <div class="form-group">
+                        <% var n = new Date(); %>
+                        <% var mm = n.getMonth() + 1; %>
+                        <% var dd = n.getFullYear()+ '-' + mm.toString().padStart(2, '0') + '-' + n.getDate().toString().padStart(2, '0'); %> <!-- 00: styczen 01:luty itp --> 
+                        <!-- <label for="date"><%= dd %></label> -->
+                        <input id="date" class="form-control" type="date" name="day[date]" value="<%= dd %>" max="<%= dd %>" min="2000-01-01" required>
                 </div>
                 <div class="form-group">                     
                     <button class="btn btn-lg btn-primary btn-block" type="submit">Submit! </button>

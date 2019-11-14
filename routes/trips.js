@@ -1,6 +1,7 @@
 var express = require("express");
 var router = express.Router();
 var Trip = require("../models/trip");
+var Day = require("../models/day");
 var User = require("../models/user");
 var multer = require("multer");
 var verifyToken = require('./verifyToken');
@@ -63,11 +64,15 @@ router.get("/new", verifyToken,
 });
 
 router.get("/:id", (req,res) => {
-    Trip.findById(req.params.id).populate("days").populate("author").exec((err, trip) => {
+    Trip.findById(req.params.id).populate({path:"days"}).populate("author").exec((err, trip) => {
             if (err){
                 console.log(err);
             } else {
-                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`});
+                var days = trip.days;
+                days.sort( (o1, o2) => {
+                    return new Date(o1.date) - new Date(o2.date);
+                });
+                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`, days:days});
             };
     });
 });
@@ -82,7 +87,7 @@ router.post("/", upload.single('avatar'), verifyToken,
     User.findById(req.user._id, (err, author) => {
         //console.log(author._id);
         var newTrip = {title: title, description: description, image: image, author: author._id}
-        console.log(newTrip);
+        //console.log(newTrip);
         Trip.create(newTrip, (err,newlyCreated) => {
             if (err) {
                 console.log(err);
@@ -100,19 +105,58 @@ router.get("/:id/edit", (req,res) => {
                 res.redirect("/trips");
                 console.log(err);
             } else {
-                res.render("trips/edit", {trip : foundTrip});
+                res.render("trips/edit", {trip : foundTrip});//, image: `uploads/${foundTrip.image}`});
             };
     });
 });
 
-router.post("/:id", (req,res) => {
+router.post("/:id", upload.single('avatar'), verifyToken, (req,res, next) => {
+    req.body.trip["image"] = req.file.originalname;
     Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
         if (err){    
             res.redirect("/trips");
             console.log(err);
         } else {
             res.redirect("/trips/" + req.params.id);
-        }
+        };
+    });
+});
+
+router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze zooptymalizować
+    // Day.deleteOne({ author: { id: req.params.id}}, (err) => {
+    //     if (err){    
+    //         res.redirect("/trips");
+    //         console.log(err);
+    //     } else {
+    //         console.log("Deleted one");
+    //         // trip.days.forEach((day) => {
+    //         //     Day
+    //         // });
+    //         res.redirect("/trips");
+    //     }
+        
+    // });
+    Trip.findById(req.params.id).populate("days").exec((err, trip) => {
+        if (err){    
+            res.redirect(`/trips/${req.params.id}`);
+            console.log(err);
+        } else {
+            trip.days.forEach((day) => {
+                Day.findByIdAndRemove(day._id, (err) => {
+                    if (err){    
+                        res.redirect(`/trips/${req.params.id}`);
+                        console.log(err);
+                    }
+                });
+            });
+            Trip.findByIdAndDelete(trip._id, (err) => {
+                if (err){    
+                    res.redirect(`/trips/${trip._id}`);
+                    console.log(err);
+                };
+                res.redirect("/trips");
+            });
+        };
     });
 });
 

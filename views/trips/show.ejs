@@ -14,23 +14,29 @@
                 <!-- <img class="img-responsive" src="<%= trip.title %>"> -->
                 <img class="img-responsive" src="<%= typeof image != 'undefined' ? image : '' %>">
                 <!-- <div class="pull-right">9.00$/night</div> Tu można dać date stworzenia-->
-                <h4><a><%= trip.title %></a></h4>
+                <h1 class="display"><a><%= trip.title %></a></h1>
                 <p><%= trip.description %></p>
                 <p>
                     <em>Submitted By <%= trip.author.username %> </em>
                 </p>
-                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning">Edit trip</a>
+                
+                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning">Edit</a>
+                <form method="POST" action="/trips/<%= trip._id %>/delete">    
+                    <button type="submit"" class="btn btn-danger">Delete</a>
+                </form>
             </div>  
             <div class="well">  
                 <div class="text-right">
                     <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">Add New Day</a>
                 </div> 
                 <hr>           
-                <% trip.days.forEach( (day) => { %>
+                <% days.forEach( (day) => { %>
                     <div class="row">
                         <div class="col-md-12">
                             <strong><%= day.location %></strong>
-                            <span class="pull-right">10 days ago</span> 
+                            <span class="pull-right">
+                                <%= day.date.getFullYear() %>-<%= (day.date.getMonth() + 1).toString().padStart(2, '0') %>-<%= day.date.getDate().toString().padStart(2, '0') %>
+                            </span> 
                             <p>
                                 <%= day.text %>
                             </p>

@@ -25,7 +25,7 @@ app.set(express.static(__dirname + "./public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
 app.set(methodOverride('_method'));
-seedDB();
+//seedDB();
 
 //PASSPORT CONFIGURATION
 app.use(require("express-session")({

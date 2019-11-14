@@ -8,7 +8,8 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 router.get("/", (req,res) => {
-    res.render("landing");
+    var error = [], success = [];
+    res.render("landing", {error: error, success: success });
 });
 
 router.get("/register", (req, res) => {
