@@ -1,16 +1,31 @@
-
 <!DOCTYPE html>
 <html>
     <head>
-        <title>YelpCamp</title>
+        <title>E-journal</title>
         <base href="/">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
-        <link type="text/css" rel="stylesheet" src='/stylesheets/landing.css'>
-        <link rel="stylesheet" href="/landing.css">
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js" type="text/javascript" async></script> <!--More cross-browser compatible-->
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"> 
+        <src src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js" type="text/javascript" async></src> <!--More cross-browser compatible-->
+        <link type="text/css" rel="stylesheet"  href="stylesheets/landing.css" charset="utf-8" async>
     </head>
     <body>
-    <h1>Hello</h1>
+        <nav class="navbar navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/">E-Journal</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav navbar-right">
+                        <% if (!currentUser) { %>
+                            <li><a href="/login">Login</a></li>
+                            <li><a href="/register">Sign Up</a></li>
+                        <% } else { %>
+                            <li><a href="#"> Signed In As <%= currentUser.username %> </a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        <% } %>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
     <!-- <div class="container">
         <% if(error && error.length > 0){ %>
             <div class="alert alert-danger" role="alert">
@@ -23,18 +38,21 @@
             </div>
         <% } %>
     </div> -->
-        
-    <div id="landing-header">
- 		<h1>Welcome to YelpCamp!</h1>
-		<a href="/campgrounds" class="btn btn-lg btn-success">View All Campgrounds</a>
-    </div>
-    
-    <ul class="slideshow">
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-      <li></li>
-    </ul>
-
-<% include partials/footer %>
+        <div id="landing-header">
+            <% if (!currentUser) { %>
+            <h1>Welcome to E-journal!</h1>
+            <a href="/login" class="btn btn-lg btn-success">Log in</a>
+            <% } else { %>
+                <h1>Write down your best journey's memories!</h1>
+                <a href="/trips" class="btn btn-lg btn-success">See your trips</a>
+            <% } %>
+        </div>
+        <ul class="slideshow">
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        </ul>
+        </body>
+    </html>

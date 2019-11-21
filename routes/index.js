@@ -2,10 +2,12 @@ var express = require("express");
 //var passport = require("passport");
 var router = express.Router();
 var User = require("../models/user");
+var Token = require("../models/token");
 var {registerValidation, loginValidation} = require('../validation');
 var bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
+router.use(express.static('./public'));
 
 router.get("/", (req,res) => {
     var error = [], success = [];
@@ -37,7 +39,7 @@ router.post("/register", async (req, res) => {
     try {
         const savedUser = await user.save();
         console.log(savedUser);
-        res.redirect("/trips");
+        res.redirect("/");
     } catch (err) {
         res.status(400).send(err);
     }
@@ -64,13 +66,19 @@ router.post("/login", async (req, res) => {
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass) return res.status(400).send('Invalid password');
     //CREATE AND ASSING TOKEN
-    const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET, { expiresIn: '30m' });
+    const token = jwt.sign({_id: user._id}, process.env.TOKEN_SECRET, { expiresIn: '15m' });
     console.log(token);
     res.set('Authentication', token);
     var trips = [];
     console.log(res.header.toString);
+    var issuedToken = {encodedToken: token};
     //res.cookie("access_token", 'Bearer ' + token);
     res.cookie("token", token);
+    Token.create(issuedToken, (err, newToken) => {
+        if (err) {
+            console.log(err);
+        }
+    });
     res.status(500);
     //res.render("trips/index", {trips: trips});
     res.redirect(301, "/trips");
@@ -88,8 +96,12 @@ router.get("/login", (req, res) => {
 // });
 
 router.get("/logout", (req, res) => {
-    req.logOut();
-    res.redirect("/trips");
+    Token.findOneAndRemove({encodedToken: req.cookies["token"]}, (err, removedToken) => {
+        if (err) {
+            return res.status(400).send(error.details[0].message);
+        }
+        res.redirect("/");
+    });
 });
 
 // function isLoggedIn(req, res, next) {

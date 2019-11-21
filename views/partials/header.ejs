@@ -7,21 +7,80 @@
     </head>
     <body>
         
-        <nav class="navbar navbar-default">
-            <div class="container-fluid">
-                <div class="navbar-header">
-                    <a class="navbar-brand" href="/">E-Journal</a>
-                </div>
-                <div class="collapse navbar-collapse">
-                    <ul class=" nav navbar-nav navbar-right">
-                    <% if (!currentUser) { %>
-                        <li><a href="/login">Login</a></li>
-                        <li><a href="/register">Sign Up</a></li>
-                    <% } else { %>
-                        <li><a href="#"> Signed In As <%= currentUser.username %> </a></li>
-                        <li><a href="/logout">Logout</a></li>
-                    <% } %>
-                    </ul>
+	    <nav class="navbar navbar-default navbar-fixed-top">
+            <div class="container"> 
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="/">E-Journal</a>
+                    </div>
+                    <div class="collapse navbar-collapse">
+                        <ul class=" nav navbar-nav navbar-right">
+                        <% if (!currentUser) { %>
+                            <li><a href="/login">Login</a></li>
+                            <li><a href="/register">Sign Up</a></li>
+                        <% } else { %>
+                            <li><a href="#"> Signed In As <%= currentUser.username %> </a></li>
+                            <li><a href="/logout">Logout</a></li>
+                        <% } %>
+                        </ul>
+                    </div>
                 </div>
             </div>
         </nav>
+
+        <div id="page-container">
+            <div id="content-wrap">
+        <!-- <nav class="navbar navbar-default navbar-fixed-top">
+                <div class="container"> 
+                  <div class="container-fluid">
+                    <div class="navbar-header">
+                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#db-project-navbar-content" aria-expanded="false">
+                        <span class="sr-only">Toggle navigation</span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                      </button>
+                      <a class="navbar-brand" href="http://www.dbproject.pl/">DB Project</a>
+                    </div>
+          
+                  <div class="collapse navbar-collapse" id="db-project-navbar-content">
+                    
+                    <ul class="nav navbar-nav">
+                      <li class="active"><a href="landing-page.html">Monitoring Cloud</a></li>
+                      <li><a href="about-system.html">O systemie</a></li>
+                      <li><a href="http://www.dbproject.pl/kontakt/">Kontakt</a></li>
+                    </ul>
+          
+                        <form class="navbar-form navbar-right">
+                          <div class="form-group">
+                                <input type="text" class="form-control" placeholder="Szukaj">
+                          </div>
+                          <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
+                        </form>
+                    
+                        <ul class="nav navbar-nav navbar-right">
+                          <li><a href="#">Pomoc</a></li>
+                          <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> Zaloguj</a>
+                                <ul class="dropdown-menu">
+                                  <form class="navbar-form navbar-left">
+                                      <div class="form-group">
+                                          <label>Login:
+                                                <input type="text" class="form-control" placeholder="login" required="">
+                                             </label>
+                                          <label>Hasło:
+                                                <input type="password" class="form-control" placeholder="&#07;&#07;&#07;&#07;&#07;&#07;" required>
+                                            </label>
+                                            <label>Zapamiętaj mnie: 
+                                              <input type="checkbox" aria-label="...">
+                                            </label>
+                                      </div>
+                                      <button type="submit" class="btn btn-default">Zaloguj</button>
+                                    </form>
+                                </ul>
+                          </li>
+                        </ul>
+                    </div>
+                  </div>
+                </div>
+              </nav> -->
