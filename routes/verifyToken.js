@@ -14,10 +14,11 @@ const auth = async (req, res, next) =>{ //middelwere function to routes
                 console.log(err);
             };
         });
-        console.log("Hejjjjj" + tokenWhiteListed);
+        // console.log("Hejjjjj" + tokenWhiteListed);
         if (!tokenWhiteListed) { 
             throw new Error("Token removed from whitelist");
-        } else {    
+        } else {
+            console.log(verified);    
             req.user = verified;
             next();
         }

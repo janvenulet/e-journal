@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var ObjectId = require('mongoose').Types.ObjectId; 
 var Trip = require("../models/trip");
 var Day = require("../models/day");
 var User = require("../models/user");
@@ -19,14 +20,16 @@ router.use(express.static('./public'));
    
 var upload = multer({ storage: storage })
 
-router.get("/", (req,res) => {
-    Trip.find({}, (err, trips) => {
-        var images = [];
+router.get("/", verifyToken, (req,res) => {
+    User.findById(req.user._id).populate("trips").exec((err, user) => {
         if (err){
             console.log(err);
         } else {
+            var trips = user.trips;
+            var images = [];
             trips.forEach( (trip) => {
                 images.push(`uploads/${trip.image}`);
+            });
                 // console.log(__dirname + "\\uploads\\kkk.png");
                 // res.sendFile(__dirname + "\\..\\uploads\\IMG_4717.JPG", (err) => {
                 //     if (err) {
@@ -50,20 +53,18 @@ router.get("/", (req,res) => {
                 //         console.log('Sent:', image)
                 //     }
                 // });
-            });
-        };
-        res.render("trips/index", {trips:trips, images: images});
+            res.render("trips/index", {trips:trips, images: images, currentUser: user});
+        }
     });
 });
 
-router.get("/new", verifyToken,
- (req,res) => {
-    res.render("trips/new.ejs");
+router.get("/new", verifyToken, (req,res) => {
+    res.render("trips/new.ejs", {currentUser: req.user});
     //var author = req.user._id;
     //console.log(author);
 });
 
-router.get("/:id", (req,res) => {
+router.get("/:id", verifyToken, (req,res) => {
     Trip.findById(req.params.id).populate({path:"days"}).populate("author").exec((err, trip) => {
             if (err){
                 console.log(err);
@@ -72,7 +73,7 @@ router.get("/:id", (req,res) => {
                 days.sort( (o1, o2) => {
                     return new Date(o1.date) - new Date(o2.date);
                 });
-                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`, days:days});
+                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`, days:days, currentUser: req.user});
             };
     });
 });
@@ -92,6 +93,8 @@ router.post("/", upload.single('avatar'), verifyToken,
             if (err) {
                 console.log(err);
             } else {
+                author.trips.push(newlyCreated);
+                author.save();
                //console.log(newlyCreated);
                 res.redirect("/trips");
             };
@@ -99,13 +102,13 @@ router.post("/", upload.single('avatar'), verifyToken,
     });
 });
 
-router.get("/:id/edit", (req,res) => {
+router.get("/:id/edit", verifyToken, (req,res) => {
     Trip.findById(req.params.id).populate("day").exec( (err, foundTrip) => {
             if (err){    
                 res.redirect("/trips");
                 console.log(err);
             } else {
-                res.render("trips/edit", {trip : foundTrip});//, image: `uploads/${foundTrip.image}`});
+                res.render("trips/edit", {trip : foundTrip, currentUser: req.user});//, image: `uploads/${foundTrip.image}`});
             };
     });
 });
@@ -149,6 +152,13 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
                     }
                 });
             });
+            User.findByIdAndUpdate(trip.author.valueOf(), {$pull: {trips: new ObjectId(trip._id)}}, (err, updatedUser) => {
+                console.log(updatedUser);    
+            });
+            User.findById(trip.author.valueOf(), (err, updatedUser) => {
+                console.log(updatedUser);    
+            });
+            console.log(trip.author.valueOf());
             Trip.findByIdAndDelete(trip._id, (err) => {
                 if (err){    
                     res.redirect(`/trips/${trip._id}`);

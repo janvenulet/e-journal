@@ -47,22 +47,22 @@ body {
   }
 
 .slideshow li:nth-child(1) { 
-background-image: url(IMG_2137.JPG) 
+background-image: url(IMG_5505.JPG) 
 }
 .slideshow li:nth-child(2) { 
 background-image: url(IMG_0406.JPG);
 animation-delay: 10s; 
 }
 .slideshow li:nth-child(3) { 
-background-image: url(IMG_1203.JPG);
+background-image: url(IMG_2137.JPG);
 animation-delay: 20s; 
 }
 .slideshow li:nth-child(4) { 
-background-image: url(IMG_1596.JPG);
+background-image: url(IMG_2137.JPG);
 animation-delay: 30s; 
 }
 .slideshow li:nth-child(5) { 
-background-image: url(IMG_5505.JPG);
+background-image: url(IMG_3327.JPG);
 animation-delay: 40s; 
 }
 

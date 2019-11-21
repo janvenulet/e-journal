@@ -23,7 +23,13 @@ var UserSchema = new mongoose.Schema({
     date: {
         type: Date,
         default: Date.now
-    }
+    },
+    trips: [ 
+        {
+            type: mongoose.Schema.Types.ObjectId, //just embedding an ID 
+            ref: "Trip" //Name of the model
+        }
+    ]
 });
 
 //UserSchema.plugin(passportLocalMongoose);
