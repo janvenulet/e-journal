@@ -3,13 +3,13 @@
     <div class="row">
         <div class="col-md-3">
             <p class="lead">E-journal (mapa na dole)</p>
-            <div>
+            <div class="list-group">
                 <li class="list-group"></li>
                 <li class="list-group"></li>
                 <li class="list-group"></li>
             </div>
+            <div id="map"></div>
         </div>
-        <div id="map"></div>
         <div class="col-md-9">
             <div class="thunbnail">
                 <!-- <img class="img-responsive" src="<%= trip.title %>"> -->
@@ -60,31 +60,40 @@
 
 <script>
     function initMap() {
-      var lat = <%= campground.lat %>;
-      var lng = <%= campground.lng %>;
-      var center = {lat: lat, lng: lng };
-      var map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 8,
-          center: center,
-          scrollwheel: false
-      });  
-      var contentString = `
-        <strong><%= campground.name %><br />
-        <%= campground.location %></strong>
-        <p><%= campground.description %></p>
-      `
-      var infowindow = new google.maps.InfoWindow({
-        content: contentString
-      });
-      var marker = new google.maps.Marker({
-          position: center,
-          map: map
-      });
-      marker.addListener('click', function() {
-        infowindow.open(map, marker);
-      });
+        
+        var index = 0;
+        <%if (days) { %>
+            var map = new google.maps.Map(document.getElementById('map'), {
+                    zoom: 8,
+                    center: {lat: <%= days[0].lat %>, lng: <%= days[0].lng %>},
+                    scrollwheel: false
+                });
+            <% days.forEach( (day) => { %>
+                index++; 
+                var lat = <%= day.lat %>;
+                var lng = <%= day.lng %>;
+                var center = {lat: lat, lng: lng };
+                var contentString = `
+                    <strong><%= day.location%><br />
+                    <%= day.text %></strong>
+                    <p><%= day.date %></p>
+                `
+                var infowindow = new google.maps.InfoWindow({
+                    content: contentString
+                });
+                var marker = new google.maps.Marker({
+                    position: center,
+                    map: map,
+                    icon: "https://chart.apis.google.com/chart?chst=d_map_pin_letter&chld=" + index + "|428bca|000000"
+                });
+                marker.addListener('click', function() {
+                    infowindow.open(map, marker);
+                });
+
+            <% }) %> 
+        <% } %> 
     }
-  </script>
-  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqnpBQUFMeW7wxAdJ_4wR8OoVJWHu0xxM&callback=initMap"></script>
+</script>
+<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqnpBQUFMeW7wxAdJ_4wR8OoVJWHu0xxM&callback=initMap"></script>
 
 <% include ../partials/footer.ejs %>

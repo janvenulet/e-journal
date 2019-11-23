@@ -22,7 +22,7 @@ router.get("/new", verifyToken, (req,res) => {
         } else {  
             res.render("days/new", {trip: trip});
         }
-    });
+    }); 
 });
 
 router.get("/:idDay/edit", verifyToken, (req,res) => {
@@ -36,14 +36,37 @@ router.get("/:idDay/edit", verifyToken, (req,res) => {
     });
 });
 
+// router.post("/:idDay", verifyToken, (req,res, next) => {
+//     Day.findByIdAndUpdate(req.params.idDay, req.body.day, (err, updatedDay) => {
+//         if (err){    
+//             res.redirect("/trips");
+//             console.log(err);
+//         } else {
+//             res.redirect("/trips/" + req.params.id);
+//         };
+//     });
+// });
+
 router.post("/:idDay", verifyToken, (req,res, next) => {
-    Day.findByIdAndUpdate(req.params.idDay, req.body.day, (err, updatedDay) => {
-        if (err){    
-            res.redirect("/trips");
+    var text = req.body.day.text;
+    var day = req.body.day.date;
+    var author = req.user._id;
+    geocoder.geocode(req.body.day.location, () => {
+       if (err || !data.length) {
             console.log(err);
-        } else {
-            res.redirect("/trips/" + req.params.id);
-        };
+            res.redirect("/trips");
+        }
+        var lat = data[0].latitude;
+        var lng = data[0].longitude;
+        var location = data[0].formattedAddress;
+        Day.findByIdAndUpdate({location:location, lat: lat, lng: lng, text:text, date: date}, (err,day) => {
+            if (err){
+                console.log(err);
+            } else {
+                req.flash("success","Successfully Updated!");
+                res.redirect("/campgrounds/" + campground._id);
+            };
+        });
     });
 });
 
@@ -69,18 +92,28 @@ router.post("/", verifyToken, (req,res) => {
     Trip.findById(req.params.id, (err, trip) => {
         if (err){
             console.log(err);
-        } else {   
-            Day.create(req.body.day, (err,day) => {
-                if (err){
-                    console.log(err);
-                } else {  
-                    day.author.id = req.user._id;
-                    day.author.username = req.user.username; //wsadzamy dni do trip-a
-                    trip.days.push(day);            
-                    trip.save();
-                    day.save();
-                    res.redirect("/trips/" + trip._id);
-                };
+        } else {
+            geocoder.geocode(req.body.day.location, function (err, data) {
+                if (err || !data.length) {  
+                    console.log(err);  
+                    //req.flash('error', 'Invalid address');
+                    return res.redirect('back'); //tego nie mam
+                }
+                var lat = data[0].latitude;
+                var lng = data[0].longitude;
+                var location = data[0].formattedAddress;
+                Day.create({location:location, lat: lat, lng: lng, text: req.body.day.text, date: req.body.day.date}, (err,day) => {
+                    if (err){
+                        console.log(err);
+                    } else {  
+                        day.author.id = req.user._id;
+                        day.author.username = req.user.username; //wsadzamy dni do trip-a
+                        trip.days.push(day);            
+                        trip.save();
+                        day.save();
+                        res.redirect("/trips/" + trip._id);
+                    };
+                });
             });
         };
     });

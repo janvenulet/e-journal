@@ -4,13 +4,13 @@
         <h2 style="text-align: center;"> Add new day to <%= trip.title %></h2>
         <div style="width: 30%; margin: 40px auto;">
             <form action="/trips/<%= trip.id %>/days" method="POST">
-                <!-- <div class="form-group">
-                        <input class="form-control" type="text" name="day[location]" placeholder="Location" required>
-                </div> -->
                 <div class="form-group">
-                    <!-- <label for="location">Location</label> -->
-                    <input class="form-control" type="text" name="location" id="day[location]" placeholder="Where have you been">
+                        <input class="form-control" type="text" name="day[location]" placeholder="Location" required>
                 </div>
+                <!-- <div class="form-group">
+                    <label for="location">Location</label>
+                    <input class="form-control" type="text" name="location" id="day[location]" placeholder="Where have you been">
+                </div> -->
                 <div class="form-group">
                         <textarea class="form-control" aria-label="With textarea" name="day[text]" rows="5" placeholder="Your experiences..."></textarea>
                 </div>
