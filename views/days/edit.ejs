@@ -1,0 +1,33 @@
+<% include ../partials/header.ejs %>
+
+<% var dd = day.date %>
+<% var n = new Date(); %>
+<% var now = n.getFullYear()+ '-' + n.getMonth().toString().padStart(2, '0') + '-' + n.getDate().toString().padStart(2, '0'); %> <!-- 00: styczen 01:luty itp --> 
+<!-- <label for="date"><%= dd %></label> -->
+<% var storedDate = dd.getFullYear() + '-'+ (dd.getMonth() + 1).toString().padStart(2, '0') + '-' + dd.getDate().toString().padStart(2, '0') %>
+
+<div class="container">
+        <div class="row">    
+            <h2 style="text-align: center;">Edit your day: <%= storedDate %></h2>
+            <div style="width: 30%; margin: 40px auto;">
+                <form method="POST" action="/trips/<%= tripId %>/days/<%= day._id %>">
+                    <div class="form-group">
+                            <input class="form-control" type="text" name="day[location]" placeholder="name" value="<%= day.location %>" required >
+                    </div>
+                    <div class="form-group">  
+                        <textarea class="form-control" aria-label="With textarea" name="day[text]" rows="5" required><%= day.text %></textarea>
+                    </div> 
+                    <div class="form-group">
+                        <input id="date" class="form-control" type="date" name="day[date]" value="<%= storedDate %>" max="<%= now %>" min="2000-01-01" required>
+                    </div>
+                    <div class="form-group">                     
+                        <button class="btn btn-lg btn-primary btn-block" type="submit">Submit! </button>
+                    </div>
+                    <input type="hidden" name="_method" value="PUT">
+                </form>
+                <a href="/trips">Go back</a>
+            </div>
+        </div>   
+    </div>
+
+<% include ../partials/footer.ejs %>

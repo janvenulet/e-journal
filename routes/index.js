@@ -7,7 +7,6 @@ var checkIfLoggedIn = require('./checkStatus');
 var bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 var cookieParser = require("cookie-parser");
-require('dotenv').config();
 router.use(express.static('./public'));
 
 router.get("/", async (req,res) => {
@@ -89,7 +88,7 @@ router.post("/login", async (req, res) => {
     const validPass = await bcrypt.compare(req.body.password, user.password);
     if (!validPass) return res.status(400).send('Invalid password');
     //CREATE AND ASSING TOKEN
-    const token = jwt.sign({_id: user._id, username: user.username}, process.env.TOKEN_SECRET, { expiresIn: '15m' });
+    const token = jwt.sign({_id: user._id, username: user.username}, process.env.TOKEN_SECRET, { expiresIn: '45m' });
     console.log(token);
     res.set('Authentication', token);
     var trips = [];

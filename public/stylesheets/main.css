@@ -25,3 +25,28 @@ height: 2.5rem;            /* Footer height */
 background-color: #428bca;
 color: aliceblue;
 }
+
+.days .glyphicon::before {
+  margin-left: 0.6em;
+}
+
+.inline-form{
+  display:inline-block;
+}
+
+.days .inline-form button {
+  background: none!important;
+  border: none;
+  padding: 0!important;
+  /*optional*/
+  font-family: arial, sans-serif;
+  /*input has OS specific font-family*/
+  color: #069;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+#map {
+  height: 400px;
+  width: 100%;
+}

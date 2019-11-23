@@ -9,37 +9,47 @@
                 <li class="list-group"></li>
             </div>
         </div>
+        <div id="map"></div>
         <div class="col-md-9">
             <div class="thunbnail">
                 <!-- <img class="img-responsive" src="<%= trip.title %>"> -->
                 <img class="img-responsive" src="<%= typeof image != 'undefined' ? image : '' %>">
                 <!-- <div class="pull-right">9.00$/night</div> Tu można dać date stworzenia-->
                 <h1 class="display"><a><%= trip.title %></a></h1>
-                <p><%= trip.description %></p>
+                <p class="text-justify"><%= trip.description %></p>
                 <p>
-                    <em>Submitted By <%= trip.author.username %> </em>
+                    <em>Submitted by: <%= trip.author.username %> </em>
                 </p>
                 
-                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning">Edit</a>
-                <form method="POST" action="/trips/<%= trip._id %>/delete">    
-                    <button type="submit"" class="btn btn-danger">Delete</a>
+                <div class="inline-block">
+                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a>
+                <form class="inline-form" method="POST" action="/trips/<%= trip._id %>/delete">    
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span> Delete </button>
                 </form>
+                </div>
             </div>  
             <div class="well">  
-                <div class="text-right">
-                    <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">Add New Day</a>
+                <div class="text-center">
+                    <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Day</a>
                 </div> 
                 <hr>           
                 <% days.forEach( (day) => { %>
-                    <div class="row">
+                    <div class="row days">
                         <div class="col-md-12">
-                            <strong><%= day.location %></strong>
-                            <span class="pull-right">
-                                <%= day.date.getFullYear() %>-<%= (day.date.getMonth() + 1).toString().padStart(2, '0') %>-<%= day.date.getDate().toString().padStart(2, '0') %>
-                            </span> 
-                            <p>
-                                <%= day.text %>
-                            </p>
+                            <div class="inline-block">
+                                <strong><%= day.location %></strong> 
+                                <a href="/trips/<%= trip._id%>/days/<%= day._id%>/edit"> 
+                                    <span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"> </span>
+                                </a>
+                                <form class="inline-form" method="POST" action="/trips/<%= trip._id%>/days/<%= day._id%>/delete">
+                                    <button type="submit"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span> </button>
+                                </form>
+                                <span class="pull-right">
+                                    <%= day.date.getFullYear() %>-<%= (day.date.getMonth() + 1).toString().padStart(2, '0') %>-<%= day.date.getDate().toString().padStart(2, '0') %>
+                                </span>
+                            </div>
+                            <p class="text-justify"><%= day.text %></p>
                         </div>
                     </div>
                 <% }) %>   
@@ -48,5 +58,33 @@
     </div>
 </div>
 
+<script>
+    function initMap() {
+      var lat = <%= campground.lat %>;
+      var lng = <%= campground.lng %>;
+      var center = {lat: lat, lng: lng };
+      var map = new google.maps.Map(document.getElementById('map'), {
+          zoom: 8,
+          center: center,
+          scrollwheel: false
+      });  
+      var contentString = `
+        <strong><%= campground.name %><br />
+        <%= campground.location %></strong>
+        <p><%= campground.description %></p>
+      `
+      var infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+      var marker = new google.maps.Marker({
+          position: center,
+          map: map
+      });
+      marker.addListener('click', function() {
+        infowindow.open(map, marker);
+      });
+    }
+  </script>
+  <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqnpBQUFMeW7wxAdJ_4wR8OoVJWHu0xxM&callback=initMap"></script>
 
 <% include ../partials/footer.ejs %>
