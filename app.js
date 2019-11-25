@@ -3,10 +3,9 @@ var express = require("express");
 var bodyParser = require("body-parser");
 var methodOverride = require("method-override");
 var app = express();
+var flash = require("connect-flash");
 var mongoose = require("mongoose");
 var cookieParser = require("cookie-parser");
-//var passport = require("passport");
-//var LocalStrategy = require("passport-local");
 
 var Trip = require("./models/trip");
 var Day = require("./models/day.js");
@@ -34,12 +33,6 @@ app.use(require("express-session")({
     resave: false,
     saveUninitialized: false
 }));
-
-//app.use(passport.initialize());
-//app.use(passport.session());
-//passport.use(new LocalStrategy(User.authenticate()));
-//passport.serializeUser(User.serializeUser());
-//passport.deserializeUser(User.deserializeUser());
 
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;

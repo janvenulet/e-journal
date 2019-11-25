@@ -16,12 +16,11 @@
         <div class="col-lg-12"> 
             <h3>Your trips!</h3>     
         </div>
-    
         <% var it = 0 %>
         <% trips.forEach((trip) => { %>
             <div class="col-md-3 col-sm-6">
-                <div class="thumbnail">     
-                    <img src="<%= typeof images[it] != 'undefined' ? images[it] : '' %>">
+                <div class="thumbnail">
+                    <img class="img-responsive" src="<%= typeof images[it] != 'undefined' ? images[it] : '' %>">
                     <div class="caption">
                         <h4> <%= trip.title %> </h4>
                     </div>

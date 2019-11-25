@@ -33,20 +33,20 @@ router.get("/", async (req,res) => {
 });
 
 router.get("/register", checkIfLoggedIn, (req, res) => {
-    res.render("register");
+    res.render("register", {error: null});
 });
 
 router.post("/register", async (req, res) => {
     if (req.user != null) redirect("/trips");
     //Validation of Data
     const {error} = registerValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return res.render("register", {error: error.details[0].message});
     //Checking if user already in db
     const emailExists = await User.findOne({email: req.body.email});
-    if (emailExists) return res.status(400).send("Email already exists");
+    if (emailExists) return res.render("register", {error: "Email is already in use"});res.render("register", {error: "Username is already asssigned to another account"});
 
     const usernameExists = await User.findOne({username: req.body.username});
-    if (usernameExists) return res.status(400).send("Username is already asssigned to another account");
+    if (usernameExists) return res.render("register", {error: "Username is already asssigned to another account"});
     
     //HASH PASSWORDS
     const salt = await bcrypt.genSalt(10);
@@ -80,13 +80,13 @@ router.post("/register", async (req, res) => {
 router.post("/login", async (req, res) => {
     if (req.user != null) redirect("/trips");
     const {error} = loginValidation(req.body);
-    if (error) return res.status(400).send(error.details[0].message);
+    if (error) return res.render("login", {error: error.details[0].message});
     //CHECK IF USER IN DB
     const user = await User.findOne({username: req.body.username});
-    if (!user) return res.status(400).send("Email don't have any assigned account to it");
+    if (!user) return res.render("login", {error: "Account with provided username doesn't exist"});
     //PASSWORD IS CORRECT
     const validPass = await bcrypt.compare(req.body.password, user.password);
-    if (!validPass) return res.status(400).send('Invalid password');
+    if (!validPass) return res.render("login", {error: 'Invalid password'});
     //CREATE AND ASSING TOKEN
     const token = jwt.sign({_id: user._id, username: user.username}, process.env.TOKEN_SECRET, { expiresIn: '45m' });
     console.log(token);
@@ -103,19 +103,12 @@ router.post("/login", async (req, res) => {
     });
     res.status(500);
     //res.render("trips/index", {trips: trips});
-    res.redirect(301, "/trips");
+    res.redirect("/trips");
 });
 
 router.get("/login", checkIfLoggedIn, (req, res) => {
-    res.render("login");
+    res.render("login", {error: null});
 });
-
-// router.post("/login", passport.authenticate("local", 
-//     {
-//         successRedirect: "/campgrounds",
-//         failureRedirect: "/login"
-//     }), (req, res) => {
-// });
 
 router.get("/logout", (req, res) => {
     Token.findOneAndRemove({encodedToken: req.cookies["token"]}, (err, removedToken) => {
@@ -125,14 +118,5 @@ router.get("/logout", (req, res) => {
         res.redirect("/");
     });
 });
-
-// function isLoggedIn(req, res, next) {
-//     if (req.isAuthenticated()){
-//         next();
-//     } else {
-//         res.redirect("/login");
-//     }
-// };
-
 
 module.exports = router; 

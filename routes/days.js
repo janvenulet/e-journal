@@ -20,7 +20,7 @@ router.get("/new", verifyToken, (req,res) => {
         if (err){
             console.log(err);
         } else {  
-            res.render("days/new", {trip: trip});
+            res.render("days/new", {trip: trip, currentUser: req.user});
         }
     }); 
 });
@@ -31,7 +31,7 @@ router.get("/:idDay/edit", verifyToken, (req,res) => {
         if (err){
             console.log(err);
         } else {  
-            res.render("days/edit", {day: day, tripId: tripId});
+            res.render("days/edit", {day: day, tripId: tripId, currentUser: req.user});
         }
     });
 });
@@ -49,22 +49,23 @@ router.get("/:idDay/edit", verifyToken, (req,res) => {
 
 router.post("/:idDay", verifyToken, (req,res, next) => {
     var text = req.body.day.text;
-    var day = req.body.day.date;
+    var date = req.body.day.date;
     var author = req.user._id;
-    geocoder.geocode(req.body.day.location, () => {
+    geocoder.geocode(req.body.day.location, (err, data) => {
        if (err || !data.length) {
             console.log(err);
-            res.redirect("/trips");
+            res.redirect("/trips"); // tu zrobić obsługę błędów
         }
+        console.log(data);
         var lat = data[0].latitude;
         var lng = data[0].longitude;
         var location = data[0].formattedAddress;
-        Day.findByIdAndUpdate({location:location, lat: lat, lng: lng, text:text, date: date}, (err,day) => {
+        Day.findByIdAndUpdate(req.params.idDay, {location:location, lat: lat, lng: lng, text:text, date: date}, (err,day) => {
+            console.log(day);
             if (err){
                 console.log(err);
             } else {
-                req.flash("success","Successfully Updated!");
-                res.redirect("/campgrounds/" + campground._id);
+                res.redirect(`/trips/${req.params.id}`);
             };
         });
     });
@@ -96,7 +97,6 @@ router.post("/", verifyToken, (req,res) => {
             geocoder.geocode(req.body.day.location, function (err, data) {
                 if (err || !data.length) {  
                     console.log(err);  
-                    //req.flash('error', 'Invalid address');
                     return res.redirect('back'); //tego nie mam
                 }
                 var lat = data[0].latitude;
@@ -118,14 +118,5 @@ router.post("/", verifyToken, (req,res) => {
         };
     });
 });
-
-// function isLoggedIn(req, res, next) {
-//     if (req.isAuthenticated()){
-//         next();
-//     } else {
-//         res.redirect("/login");
-//     }
-// };
-
 
 module.exports = router; 

@@ -5,6 +5,7 @@ var Trip = require("../models/trip");
 var Day = require("../models/day");
 var User = require("../models/user");
 var multer = require("multer");
+var path = require("path");
 var verifyToken = require('./verifyToken');
 var uploadsPath = "\\Users\\Jan\\Documents\\Praca dyplomowa\\Projekt\\public\\uploads"; //tu może zamienić na './public/uploads'
 var storage = multer.diskStorage({
@@ -13,13 +14,23 @@ var storage = multer.diskStorage({
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname); // tu wstawić login i tytuł tripa
-    }
-  });
+    },
+});
+
+var fileFilter= (req, file, cb) => {
+    var ext = path.extname(file.originalname);
+    ext = ext.toLowerCase();
+    console.log(ext);
+    if(ext !== '.png' && ext !== '.jpg' && ext !== '.gif' && ext !== '.jpeg') {
+            console.log("Only images are allowed");
+            return cb(new Error('Only images format files are allowed'));
+        }
+    cb(null, true);
+};
 
 router.use(express.static('./public'));
    
-var upload = multer({ storage: storage })
-
+var upload = multer({ storage: storage, fileFilter: fileFilter});
 router.get("/", verifyToken, (req,res) => {
     User.findById(req.user._id).populate("trips").exec((err, user) => {
         if (err){
@@ -30,29 +41,6 @@ router.get("/", verifyToken, (req,res) => {
             trips.forEach( (trip) => {
                 images.push(`uploads/${trip.image}`);
             });
-                // console.log(__dirname + "\\uploads\\kkk.png");
-                // res.sendFile(__dirname + "\\..\\uploads\\IMG_4717.JPG", (err) => {
-                //     if (err) {
-                //         console.log(err);
-                //     }
-                //     res.render("trips/index", {trips:trips});
-                // });
-                // var options = {
-                //     root: __dirname + 'uploads',
-                //     dotfiles: 'deny',
-                //     headers: {
-                //       'x-timestamp': Date.now(),
-                //       'x-sent': true
-                //     }
-                //   }
-                // let image = trip.image;
-                // res.sendFile("kkk.png", options, (err) => {
-                //     if (err) {
-                //         console.log(err);
-                //     } else {
-                //         console.log('Sent:', image)
-                //     }
-                // });
             res.render("trips/index", {trips:trips, images: images, currentUser: user});
         }
     });
@@ -79,26 +67,31 @@ router.get("/:id", verifyToken, (req,res) => {
 });
 
 
-router.post("/", upload.single('avatar'), verifyToken,
+router.post("/", verifyToken,
  (req, res, next) => {
-    //console.log(req.file);
-    var title = req.body.title;
-    var description = req.body.description;
-    var image = req.file.originalname; //tu path może zamienić
-    User.findById(req.user._id, (err, author) => {
-        //console.log(author._id);
-        var newTrip = {title: title, description: description, image: image, author: author._id}
-        //console.log(newTrip);
-        Trip.create(newTrip, (err,newlyCreated) => {
-            if (err) {
-                console.log(err);
-            } else {
-                author.trips.push(newlyCreated);
-                author.save();
-               //console.log(newlyCreated);
-                res.redirect("/trips");
-            };
-        });
+    upload.single('avatar')(req,res, (err) => {
+        if (err) {
+            res.render("trips/new", {currentUser: req.user, error: err.toString()} );
+        } else {
+            var title = req.body.title;
+            var description = req.body.description;
+            var image = req.file.originalname; //tu path może zamienić
+            User.findById(req.user._id, (err, author) => {
+                //console.log(author._id);
+                var newTrip = {title: title, description: description, image: image, author: author._id}
+                //console.log(newTrip);
+                Trip.create(newTrip, (err,newlyCreated) => {
+                    if (err) {
+                        console.log(err);
+                    } else {
+                        author.trips.push(newlyCreated);
+                        author.save();
+                       //console.log(newlyCreated);
+                        res.redirect("/trips");
+                    };
+                });
+            });
+        };
     });
 });
 
@@ -108,21 +101,33 @@ router.get("/:id/edit", verifyToken, (req,res) => {
                 res.redirect("/trips");
                 console.log(err);
             } else {
+                console.log(foundTrip);
                 res.render("trips/edit", {trip : foundTrip, currentUser: req.user});//, image: `uploads/${foundTrip.image}`});
             };
     });
 });
 
 router.post("/:id", upload.single('avatar'), verifyToken, (req,res, next) => {
-    req.body.trip["image"] = req.file.originalname;
-    Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
-        if (err){    
-            res.redirect("/trips");
-            console.log(err);
-        } else {
-            res.redirect("/trips/" + req.params.id);
-        };
-    });
+    if (req.body.trip["image"] == null) {
+        Trip.findByIdAndUpdate(req.params.id, {$set: {title: req.body.trip["title"], description: req.body.trip["description"]}}, (err, updatedTrip) => {
+            if (err){    
+                res.redirect("/trips");
+                console.log(err);
+            } else {
+                res.redirect("/trips/" + req.params.id);
+            };
+        });
+    } else {
+        req.body.trip["image"] = req.file.originalname;
+        Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
+            if (err){    
+                res.redirect("/trips");
+                console.log(err);
+            } else {
+                res.redirect("/trips/" + req.params.id);
+            };
+        });
+    }
 });
 
 router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze zooptymalizować
@@ -177,5 +182,13 @@ function isLoggedIn(req, res, next) {
         res.redirect("/login");
     }
 };
+
+function isAuthenticated(trip, user) {
+    if (trip.author == user._id) {
+        return true
+    } else {
+        return false;
+    }
+}
 
 module.exports = router; 

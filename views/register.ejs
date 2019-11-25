@@ -1,5 +1,4 @@
 <% include partials/header.ejs %>
-<h1>Sing up!</h1>
 
 <!-- <form action="/register" method="POST">
     <input type="text" name="username" placeholder="username">
@@ -9,6 +8,11 @@
 </form> -->
 
 <div class="container">
+        <% if (error) { %>
+            <div class="alert alert-danger" role="alert">
+                    <%= error%>
+            </div>
+            <% } %>
         <div class="row">    
             <h1 style="text-align: center;">Create new account</h1>
             <div style="width: 30%; margin: 40px auto;">

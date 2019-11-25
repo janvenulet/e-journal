@@ -1,5 +1,5 @@
 body {
-    background-color: wheat;
+    background-image: linear-gradient(wheat,#428bca,wheat);
     padding-top: 60px;
   }
   @media (max-width: 979px) {
@@ -34,6 +34,19 @@ color: aliceblue;
   display:inline-block;
 }
 
+.trip-box .inline-form{
+  display:inline-block;
+  padding-bottom: 2rem;
+}
+
+.trip-box a{
+  color: #333;
+}
+
+.trip-box a:hover{
+  color: #222;
+}
+
 .days .inline-form button {
   background: none!important;
   border: none;
@@ -49,4 +62,41 @@ color: aliceblue;
 #map {
   height: 400px;
   width: 100%;
+  margin: 2rem 0;
 }
+
+.img-thumbnail {
+  background-color: #428bca;
+  padding: 2%;
+}
+
+.flex-wrap {
+  display:flex;
+  flex-wrap: wrap;
+}
+
+.go-back-btn{
+  color: #333;
+}
+
+.go-back-btn:hover{
+  color: #222;
+}
+
+.quick-menu > *{
+  margin: 0.5em;
+}
+
+.quick-menu {
+  margin: 1.5em 0 3.5em 0;
+}
+
+/* .img-responsive{
+  overflow:hidden;
+  max-height: 15vw;
+}
+
+.safsa{
+    width:100%;
+    height: 25vw;
+} */

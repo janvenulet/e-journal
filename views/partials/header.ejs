@@ -4,10 +4,55 @@
         <title>E-Journal</title>
         <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
         <link rel="stylesheet" href="/stylesheets/main.css">
-    </head>
-    <body>
-        
-	    <nav class="navbar navbar-default navbar-fixed-top">
+        <script src="https://code.jquery.com/jquery-2.2.4.js"></script>
+        <script src="https://stackpath.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js" integrity="sha384-aJ21OjlMXNL5UyIl/XNwTMqvzeRMZH2w8c5cRVpzpU8Y5bApTppSuUkhZXN0VxHd" crossorigin="anonymous"></script>
+        <src src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.js" type="text/javascript" async></src> <!--More cross-browser compatible-->
+        <link type="text/css" rel="stylesheet"  href="stylesheets/landing.css" async>
+      </head>
+    <body>   
+	    <nav class="navbar navbar-inverse navbar-fixed-top">
+        <div class="container"> 
+          <div class="container-fluid">
+
+            <div class="navbar-header">
+              <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar-content" aria-expanded="false">
+                <span class="sr-only">Toggle navigation</span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+              </button>
+              <a class="navbar-brand" href="/">E-Journal</a>
+            </div>
+
+          <div class="collapse navbar-collapse" id="navbar-content">
+              <% if (currentUser) { %>  
+                <ul class="nav navbar-nav"> 
+                  <li><a href="/trips">Your trips</a></li>
+                </ul>
+                <% } %>
+            <ul class="nav navbar-nav navbar-right">
+              <% if (!currentUser) { %>
+                  <li><a href="/login"><span class="glyphicon glyphicon-user"></span> Login</a></li>
+                  <li><a href="/register">Sign Up</a></li>
+              <% } else { %>
+                  <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                        <span class="glyphicon glyphicon-user"></span> Signed in: <%= currentUser.username %>
+                    </a>
+                    <ul class="dropdown-menu">
+                      <li><a href="#">Change password</a></li>
+                      <li><a href="/">Delete account</a></li>
+                      <li><a href="/logout">Logout</a></li>
+                    </ul>
+                  </li>
+                  <li><a href="/logout"><span class="glyphicon glyphicon-off"></span> Logout</a></li>
+              <% } %>
+            </ul>
+          </div>
+
+        </div>
+      </nav>
+	    <!-- <nav class="navbar navbar-default navbar-fixed-top">
             <div class="container"> 
                 <div class="container-fluid">
                     <div class="navbar-header">
@@ -26,61 +71,7 @@
                     </div>
                 </div>
             </div>
-        </nav>
+        </nav> -->
 
         <div id="page-container">
             <div id="content-wrap">
-        <!-- <nav class="navbar navbar-default navbar-fixed-top">
-                <div class="container"> 
-                  <div class="container-fluid">
-                    <div class="navbar-header">
-                      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#db-project-navbar-content" aria-expanded="false">
-                        <span class="sr-only">Toggle navigation</span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                      </button>
-                      <a class="navbar-brand" href="http://www.dbproject.pl/">DB Project</a>
-                    </div>
-          
-                  <div class="collapse navbar-collapse" id="db-project-navbar-content">
-                    
-                    <ul class="nav navbar-nav">
-                      <li class="active"><a href="landing-page.html">Monitoring Cloud</a></li>
-                      <li><a href="about-system.html">O systemie</a></li>
-                      <li><a href="http://www.dbproject.pl/kontakt/">Kontakt</a></li>
-                    </ul>
-          
-                        <form class="navbar-form navbar-right">
-                          <div class="form-group">
-                                <input type="text" class="form-control" placeholder="Szukaj">
-                          </div>
-                          <button type="submit" class="btn btn-default"><span class="glyphicon glyphicon-search"></span></button>
-                        </form>
-                    
-                        <ul class="nav navbar-nav navbar-right">
-                          <li><a href="#">Pomoc</a></li>
-                          <li class="dropdown">
-                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false"><i class="fas fa-user"></i> Zaloguj</a>
-                                <ul class="dropdown-menu">
-                                  <form class="navbar-form navbar-left">
-                                      <div class="form-group">
-                                          <label>Login:
-                                                <input type="text" class="form-control" placeholder="login" required="">
-                                             </label>
-                                          <label>Hasło:
-                                                <input type="password" class="form-control" placeholder="&#07;&#07;&#07;&#07;&#07;&#07;" required>
-                                            </label>
-                                            <label>Zapamiętaj mnie: 
-                                              <input type="checkbox" aria-label="...">
-                                            </label>
-                                      </div>
-                                      <button type="submit" class="btn btn-default">Zaloguj</button>
-                                    </form>
-                                </ul>
-                          </li>
-                        </ul>
-                    </div>
-                  </div>
-                </div>
-              </nav> -->

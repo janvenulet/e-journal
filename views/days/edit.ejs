@@ -2,7 +2,7 @@
 
 <% var dd = day.date %>
 <% var n = new Date(); %>
-<% var now = n.getFullYear()+ '-' + n.getMonth().toString().padStart(2, '0') + '-' + n.getDate().toString().padStart(2, '0'); %> <!-- 00: styczen 01:luty itp --> 
+<% var now = n.getFullYear()+ '-' + (n.getMonth() + 1).toString().padStart(2, '0') + '-' + n.getDate().toString().padStart(2, '0'); %> <!-- 00: styczen 01:luty itp --> 
 <!-- <label for="date"><%= dd %></label> -->
 <% var storedDate = dd.getFullYear() + '-'+ (dd.getMonth() + 1).toString().padStart(2, '0') + '-' + dd.getDate().toString().padStart(2, '0') %>
 
@@ -25,7 +25,7 @@
                     </div>
                     <input type="hidden" name="_method" value="PUT">
                 </form>
-                <a href="/trips">Go back</a>
+                <a href="javascript:history.back()">Go back</a>
             </div>
         </div>   
     </div>

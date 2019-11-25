@@ -2,27 +2,47 @@
 <div class="container">
     <div class="row">
         <div class="col-md-3">
-            <p class="lead">E-journal (mapa na dole)</p>
-            <div class="list-group">
-                <li class="list-group"></li>
-                <li class="list-group"></li>
-                <li class="list-group"></li>
+            <div class="text-center quick-menu">
+                <p class="lead">Write your life's stories... </p>
+                <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">
+                    <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Day</a>
+                <form method="GET" action="/trips/<%=trip._id %>/edit">    
+                    <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a> </button>
+                </form>
+                <form method="POST" action="/trips/<%= trip._id %>/delete">    
+                    <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span> Delete </button>
+                </form>
             </div>
+            
+            <% if (days != null && days.length>1) { %>
+                
+                <h5 class="lead">Map of the trip:</h5>
+            <% }; %>  
             <div id="map"></div>
         </div>
         <div class="col-md-9">
-            <div class="thunbnail">
-                <!-- <img class="img-responsive" src="<%= trip.title %>"> -->
+            <div class="trip-box">
                 <img class="img-responsive" src="<%= typeof image != 'undefined' ? image : '' %>">
-                <!-- <div class="pull-right">9.00$/night</div> Tu można dać date stworzenia-->
-                <h1 class="display"><a><%= trip.title %></a></h1>
+                <h1 class="display">
+                    <a><%= trip.title %></a>
+                    
+                <% if (days != null && days.length > 2) { %>
+                    <% var dayStart = days[0], dayEnd = days[days.length-1] %>
+                    <small>
+                        <%=  dayStart.date.getFullYear() %>.<%= ( dayStart.date.getMonth() + 1).toString().padStart(2, '0') %>.<%=  dayStart.date.getDate().toString().padStart(2, '0') %> - 
+                        <%=  dayEnd.date.getFullYear() %>.<%= ( dayEnd.date.getMonth() + 1).toString().padStart(2, '0') %>.<%=  dayEnd.date.getDate().toString().padStart(2, '0') %>
+                    </small>
+                <% }; %>  
+                </h1>
                 <p class="text-justify"><%= trip.description %></p>
                 <p>
-                    <em>Submitted by: <%= trip.author.username %> </em>
+                    <em>Submitted by: <strong><%= trip.author.username %> </strong></em>
                 </p>
-                
+            
                 <div class="inline-block">
-                <a href="/trips/<%=trip._id %>/edit" class="btn btn-warning"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a>
+                <form class="inline-form" method="GET" action="/trips/<%=trip._id %>/edit">    
+                    <button type="submit" class="btn btn-warning"><span class="glyphicon glyphicon glyphicon-pencil" aria-hidden="true"></span> Edit</a> </button>
+                </form>
                 <form class="inline-form" method="POST" action="/trips/<%= trip._id %>/delete">    
                     <button type="submit" class="btn btn-danger"><span class="glyphicon glyphicon glyphicon-trash" aria-hidden="true"></span> Delete </button>
                 </form>
@@ -31,7 +51,7 @@
             <div class="well">  
                 <div class="text-center">
                     <a class="btn btn-success" href="/trips/<%= trip._id%>/days/new">
-                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> New Day</a>
+                        <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Add day to the journal</a>
                 </div> 
                 <hr>           
                 <% days.forEach( (day) => { %>
@@ -60,9 +80,9 @@
 
 <script>
     function initMap() {
-        
+        var bounds = new google.maps.LatLngBounds();
         var index = 0;
-        <%if (days) { %>
+        <%if (typeof days != undefined && days.length > 0) { %>
             var map = new google.maps.Map(document.getElementById('map'), {
                     zoom: 8,
                     center: {lat: <%= days[0].lat %>, lng: <%= days[0].lng %>},
@@ -74,9 +94,8 @@
                 var lng = <%= day.lng %>;
                 var center = {lat: lat, lng: lng };
                 var contentString = `
-                    <strong><%= day.location%><br />
-                    <%= day.text %></strong>
-                    <p><%= day.date %></p>
+                    <strong><%= day.location%><br /></strong>
+                    <p><%= day.date.getFullYear() %>-<%= (day.date.getMonth() + 1).toString().padStart(2, '0') %>-<%= day.date.getDate().toString().padStart(2, '0') %></p>
                 `
                 var infowindow = new google.maps.InfoWindow({
                     content: contentString
@@ -90,10 +109,13 @@
                     infowindow.open(map, marker);
                 });
 
+                bounds.extend(marker.position);
+
             <% }) %> 
+            map.fitBounds(bounds);
         <% } %> 
     }
 </script>
-<script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqnpBQUFMeW7wxAdJ_4wR8OoVJWHu0xxM&callback=initMap"></script>
+<!-- <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDqnpBQUFMeW7wxAdJ_4wR8OoVJWHu0xxM&callback=initMap"></script> -->
 
 <% include ../partials/footer.ejs %>
