@@ -2,7 +2,7 @@
 
 <div class="container">
         <div class="row">    
-            <h2 style="text-align: center;">Edit <%= trip.title %>! ;)</h2>
+            <h2 style="text-align: center;">Edit your trip: <%= trip.title %></h2>
             <div style="width: 30%; margin: 40px auto;">
                 <form method="POST" action="/trips/<%= trip._id %>" enctype="multipart/form-data">
                     <div class="form-group">
@@ -19,7 +19,7 @@
                     <div class="form-group">                     
                         <button class="btn btn-lg btn-primary btn-block" type="submit">Submit! </button>
                     </div>
-                    <input type="hidden" name="_method" value="PUT">
+                    <!-- <input type="hidden" name="_method" value="PUT"> -->
                 </form>
                 <a class="go-back-btn" href="javascript:history.back()">Go back</a>
             </div>

@@ -57,11 +57,15 @@ router.get("/:id", verifyToken, (req,res) => {
             if (err){
                 console.log(err);
             } else {
-                var days = trip.days;
-                days.sort( (o1, o2) => {
-                    return new Date(o1.date) - new Date(o2.date);
-                });
-                res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`, days:days, currentUser: req.user});
+                if (trip.author._id != req.user._id) {
+                    res.redirect('/login');
+                } else {
+                    var days = trip.days;
+                    days.sort( (o1, o2) => {
+                        return new Date(o1.date) - new Date(o2.date);
+                    });
+                    res.render("trips/show", {trip: trip, image: `uploads/${trip.image}`, days:days, currentUser: req.user});
+                }
             };
     });
 });
@@ -96,38 +100,52 @@ router.post("/", verifyToken,
 });
 
 router.get("/:id/edit", verifyToken, (req,res) => {
-    Trip.findById(req.params.id).populate("day").exec( (err, foundTrip) => {
+    Trip.findById(req.params.id).populate("day").exec( (err, trip) => {
             if (err){    
                 res.redirect("/trips");
                 console.log(err);
             } else {
-                console.log(foundTrip);
-                res.render("trips/edit", {trip : foundTrip, currentUser: req.user});//, image: `uploads/${foundTrip.image}`});
+                if (trip.author._id != req.user._id) {
+                    res.redirect('/login');
+                } else {
+                    res.render("trips/edit", {trip : trip, currentUser: req.user});//, image: `uploads/${foundTrip.image}`});
+                }
             };
     });
 });
 
 router.post("/:id", upload.single('avatar'), verifyToken, (req,res, next) => {
-    if (req.body.trip["image"] == null) {
-        Trip.findByIdAndUpdate(req.params.id, {$set: {title: req.body.trip["title"], description: req.body.trip["description"]}}, (err, updatedTrip) => {
-            if (err){    
-                res.redirect("/trips");
+    console.log(req.file);
+    Trip.findById(req.params.id, (err, trip) => {
+        if (trip.author._id != req.user._id) {
+            console.log("0!bxc");
+            res.redirect('/login');
+        } else {
+            if (typeof req.file == 'undefined') {
+                console.log("asdf1");
                 console.log(err);
+                Trip.findByIdAndUpdate(req.params.id, {$set: {title: req.body.trip["title"], description: req.body.trip["description"]}}, (err, updatedTrip) => {
+                    if (err){    
+                        res.redirect("/trips");
+                        console.log(err);
+                    } else {
+                        res.redirect("/trips/" + req.params.id);
+                    };
+                });
             } else {
-                res.redirect("/trips/" + req.params.id);
+                console.log("3412ab2");
+                req.body.trip["image"] = req.file.originalname;
+                Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
+                    if (err){    
+                        res.redirect("/trips");
+                        console.log(err);
+                    } else {
+                        res.redirect("/trips/" + req.params.id);
+                    };
+                });
             };
-        });
-    } else {
-        req.body.trip["image"] = req.file.originalname;
-        Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
-            if (err){    
-                res.redirect("/trips");
-                console.log(err);
-            } else {
-                res.redirect("/trips/" + req.params.id);
-            };
-        });
-    }
+        };
+    });
 });
 
 router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze zooptymalizować
@@ -149,28 +167,33 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
             res.redirect(`/trips/${req.params.id}`);
             console.log(err);
         } else {
-            trip.days.forEach((day) => {
-                Day.findByIdAndRemove(day._id, (err) => {
-                    if (err){    
-                        res.redirect(`/trips/${req.params.id}`);
-                        console.log(err);
-                    }
+            if (trip.author._id != req.user._id) {
+                
+                res.redirect('/login');
+            } else {
+                trip.days.forEach((day) => {
+                    Day.findByIdAndRemove(day._id, (err) => {
+                        if (err){    
+                            res.redirect(`/trips/${req.params.id}`);
+                            console.log(err);
+                        }
+                    });
                 });
-            });
-            User.findByIdAndUpdate(trip.author.valueOf(), {$pull: {trips: new ObjectId(trip._id)}}, (err, updatedUser) => {
-                console.log(updatedUser);    
-            });
-            User.findById(trip.author.valueOf(), (err, updatedUser) => {
-                console.log(updatedUser);    
-            });
-            console.log(trip.author.valueOf());
-            Trip.findByIdAndDelete(trip._id, (err) => {
-                if (err){    
-                    res.redirect(`/trips/${trip._id}`);
-                    console.log(err);
-                };
-                res.redirect("/trips");
-            });
+                User.findByIdAndUpdate(trip.author.valueOf(), {$pull: {trips: new ObjectId(trip._id)}}, (err, updatedUser) => {
+                    console.log(updatedUser);    
+                });
+                User.findById(trip.author.valueOf(), (err, updatedUser) => {
+                    console.log(updatedUser);    
+                });
+                console.log(trip.author.valueOf());
+                Trip.findByIdAndDelete(trip._id, (err) => {
+                    if (err){    
+                        res.redirect(`/trips/${trip._id}`);
+                        console.log(err);
+                    };
+                    res.redirect("/trips");
+                });
+            }
         };
     });
 });
