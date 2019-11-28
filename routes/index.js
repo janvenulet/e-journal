@@ -1,10 +1,13 @@
 var express = require("express");
 var router = express.Router();
 var User = require("../models/user");
+var Trip = require("../models/trip");
+var Day = require("../models/day");
 var Token = require("../models/token");
 var {registerValidation, loginValidation} = require('../validation');
 var checkIfLoggedIn = require('./checkStatus');
 var bcrypt = require('bcryptjs');
+var verifyToken = require('./verifyToken');
 const jwt = require('jsonwebtoken');
 var cookieParser = require("cookie-parser");
 router.use(express.static('./public'));
@@ -43,7 +46,7 @@ router.post("/register", async (req, res) => {
     if (error) return res.render("register", {error: error.details[0].message});
     //Checking if user already in db
     const emailExists = await User.findOne({email: req.body.email});
-    if (emailExists) return res.render("register", {error: "Email is already in use"});res.render("register", {error: "Username is already asssigned to another account"});
+    if (emailExists) return res.render("register", {error: "Email is already in use"});
 
     const usernameExists = await User.findOne({username: req.body.username});
     if (usernameExists) return res.render("register", {error: "Username is already asssigned to another account"});
@@ -116,6 +119,75 @@ router.get("/logout", (req, res) => {
             return res.status(400).send(error.details[0].message);
         }
         res.redirect("/");
+    });
+});
+
+router.get("/password", verifyToken, (req, res) => {
+    res.render("password", {error: null, currentUser: req.user});
+});
+
+router.post("/password", verifyToken, async (req, res) => {
+    User.findById(req.user._id, async (err, user) => {
+        if (err) {
+            return res.render("password", {error: error.message, currentUser: req.user});
+        } else {
+            const validPass = await bcrypt.compare(req.body.oldPassword, user.password);
+            if (!validPass) {
+                return res.render("password", {error: 'Invalid password', currentUser: req.user})
+            } else {
+                const salt = await bcrypt.genSalt(10);
+                const hashedPassword = await bcrypt.hash(req.body.newPassword, salt);
+                User.findByIdAndUpdate(req.user._id, {$set: {password: hashedPassword}}, (err, updatedTrip) => {
+                    if (err){    
+                        return res.render("password", {error: error.message, currentUser: req.user});
+                    } else {
+                        res.redirect("/trips");
+                    };
+                });
+            };
+        };
+    });
+});
+
+router.get("/delete", verifyToken, (req, res) => {
+    User.findById(req.user._id).populate("trips").exec((err, user) => {
+        if (err) { 
+                console.log(err);  
+                res.redirect(`/trips`);
+        } else {
+            user.trips.forEach((trip) => {
+                Trip.findById(trip._id).populate("days").exec((err, trip) => {
+                    if (err){
+                        console.log(err);    
+                        res.redirect(`/trips`);
+                    } else {
+                        trip.days.forEach((day) => {
+                            Day.findByIdAndRemove(day._id, (err, day) => {
+                                if (err){
+                                    console.log(err);    
+                                    return res.redirect(`/trips`);
+                                } else {
+                                    Trip.findByIdAndRemove(trip._id, (err, trip) => {
+                                        if (err){    
+                                            console.log(err);
+                                            return res.redirect(`/trips`);
+                                        }
+                                    });    
+                                };
+                            });
+                        });
+                    };
+                });
+            });
+            User.findByIdAndRemove(user._id, (err, user) => {
+                if (err){    
+                    res.redirect(`/trips`);
+                    console.log(err);
+                } else { 
+                    res.redirect(`/logout`);
+                }
+            });
+        };
     });
 });
 

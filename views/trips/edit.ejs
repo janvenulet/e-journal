@@ -2,8 +2,8 @@
 
 <div class="container">
         <div class="row">    
-            <h2 style="text-align: center;">Edit your trip: <%= trip.title %></h2>
-            <div style="width: 30%; margin: 40px auto;">
+            <h2 class="text-center" style="margin-top: 2.5em;">Edit your trip: <%= trip.title %></h2>
+            <div class="col-md-4 col-sm-6 col-xs-10 col-md-offset-4 col-xs-offset-1">
                 <form method="POST" action="/trips/<%= trip._id %>" enctype="multipart/form-data">
                     <div class="form-group">
                             <input class="form-control" type="text" name="trip[title]" placeholder="name" value="<%= trip.title %>" required >

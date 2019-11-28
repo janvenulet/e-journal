@@ -118,11 +118,9 @@ router.post("/:id", upload.single('avatar'), verifyToken, (req,res, next) => {
     console.log(req.file);
     Trip.findById(req.params.id, (err, trip) => {
         if (trip.author._id != req.user._id) {
-            console.log("0!bxc");
             res.redirect('/login');
         } else {
             if (typeof req.file == 'undefined') {
-                console.log("asdf1");
                 console.log(err);
                 Trip.findByIdAndUpdate(req.params.id, {$set: {title: req.body.trip["title"], description: req.body.trip["description"]}}, (err, updatedTrip) => {
                     if (err){    
@@ -133,7 +131,6 @@ router.post("/:id", upload.single('avatar'), verifyToken, (req,res, next) => {
                     };
                 });
             } else {
-                console.log("3412ab2");
                 req.body.trip["image"] = req.file.originalname;
                 Trip.findByIdAndUpdate(req.params.id, req.body.trip, (err, updatedTrip) => {
                     if (err){    
@@ -168,7 +165,6 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
             console.log(err);
         } else {
             if (trip.author._id != req.user._id) {
-                
                 res.redirect('/login');
             } else {
                 trip.days.forEach((day) => {
@@ -182,10 +178,6 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
                 User.findByIdAndUpdate(trip.author.valueOf(), {$pull: {trips: new ObjectId(trip._id)}}, (err, updatedUser) => {
                     console.log(updatedUser);    
                 });
-                User.findById(trip.author.valueOf(), (err, updatedUser) => {
-                    console.log(updatedUser);    
-                });
-                console.log(trip.author.valueOf());
                 Trip.findByIdAndDelete(trip._id, (err) => {
                     if (err){    
                         res.redirect(`/trips/${trip._id}`);
@@ -197,13 +189,5 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
         };
     });
 });
-
-function isAuthenticated(trip, user) {
-    if (trip.author == user._id) {
-        return true
-    } else {
-        return false;
-    }
-}
 
 module.exports = router; 
