@@ -3,8 +3,7 @@ require('dotenv').config();
 var cookieParser = require("cookie-parser");
 var Token = require("../models/token");
 
-const auth = async (req, res, next) =>{ //middelwere function to routes
-    //var cookies = req.cookies;//('access_token');//.replace('Bearer', '').trim();
+const auth = async (req, res, next) =>{
     var token = req.cookies["token"];
     if (!token) return res.redirect("/login");
     try {
@@ -17,12 +16,12 @@ const auth = async (req, res, next) =>{ //middelwere function to routes
         if (!tokenWhiteListed) { 
             throw new Error("Token removed from whitelist");
         } else {
-            console.log(verified);    
+        //    console.log(verified);    
             req.user = verified;
             next();
         }
     } catch (err) {
-        console.log(err);
+        console.log(err.message);
         res.redirect("/login");
     };
 };

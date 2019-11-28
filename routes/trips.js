@@ -198,14 +198,6 @@ router.post("/:id/delete", verifyToken, (req,res, next) => { //To mogę jeszcze 
     });
 });
 
-function isLoggedIn(req, res, next) {
-    if (req.isAuthenticated()){
-        next();
-    } else {
-        res.redirect("/login");
-    }
-};
-
 function isAuthenticated(trip, user) {
     if (trip.author == user._id) {
         return true
