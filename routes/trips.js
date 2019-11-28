@@ -7,7 +7,7 @@ var User = require("../models/user");
 var multer = require("multer");
 var path = require("path");
 var verifyToken = require('./verifyToken');
-var uploadsPath = "\\Users\\Jan\\Documents\\Praca dyplomowa\\Projekt\\public\\uploads"; //tu może zamienić na './public/uploads'
+var uploadsPath = "./public/uploads"; //tu może zamienić na './public/uploads'
 var storage = multer.diskStorage({
     destination: function (req, file, cb) {
       cb(null, uploadsPath)
