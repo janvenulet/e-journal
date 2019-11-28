@@ -37,7 +37,7 @@ router.get("/register", checkIfLoggedIn, (req, res) => {
 });
 
 router.post("/register", async (req, res) => {
-    if (req.user != null) redirect("/trips");
+    if (req.user != null) return res.redirect("/trips");
     //Validation of Data
     const {error} = registerValidation(req.body);
     if (error) return res.render("register", {error: error.details[0].message});
