@@ -18,8 +18,9 @@ var authRoutes = require("./routes/index");
 
 const PORT = 8092;
 const mongoURI = "mongodb://localhost:27017/e-journal";
+const mongoURIRemote = "mongodb+srv://janven:"+ process.env.ATLAS_PASSWORD +"@cluster0-v8grk.mongodb.net/test?retryWrites=true&w=majority";
 
-mongoose.connect(mongoURI, {useNewUrlParser: true, useUnifiedTopology: true});
+mongoose.connect(mongoURIRemote, {useNewUrlParser: true, useUnifiedTopology: true});
 app.set("view engine", "ejs");
 app.set(express.static(__dirname + "./public"));
 app.use(bodyParser.urlencoded({extended: true}));
