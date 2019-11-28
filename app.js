@@ -16,7 +16,7 @@ var dayRoutes = require("./routes/days");
 var tripRoutes = require("./routes/trips");
 var authRoutes = require("./routes/index");
 
-const PORT = 8092;
+const PORT = process.env.PORT ||8080;
 const mongoURI = "mongodb://localhost:27017/e-journal";
 const mongoURIRemote = "mongodb+srv://janven:"+ process.env.ATLAS_PASSWORD +"@cluster0-v8grk.mongodb.net/test?retryWrites=true&w=majority";
 
