@@ -1,7 +1,7 @@
 {
   "name": "journalapp",
   "version": "1.0.0",
-  "description": "Bachelor degree thesis",
+  "description": "E-journal Jan Venulet",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",

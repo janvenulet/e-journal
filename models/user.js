@@ -20,10 +20,6 @@ var UserSchema = new mongoose.Schema({
         max: 1024,
         min: 6
     },
-    date: {
-        type: Date,
-        default: Date.now
-    },
     trips: [ 
         {
             type: mongoose.Schema.Types.ObjectId, //just embedding an ID 
@@ -31,7 +27,5 @@ var UserSchema = new mongoose.Schema({
         }
     ]
 });
-
-//UserSchema.plugin(passportLocalMongoose);
 
 module.exports = mongoose.model("User", UserSchema);

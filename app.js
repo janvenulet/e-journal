@@ -1,7 +1,6 @@
 require('dotenv').config();
 var express = require("express");
 var bodyParser = require("body-parser");
-var methodOverride = require("method-override");
 var app = express();
 var flash = require("connect-flash");
 var mongoose = require("mongoose");
@@ -25,15 +24,6 @@ app.set("view engine", "ejs");
 app.set(express.static(__dirname + "./public"));
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(cookieParser());
-app.set(methodOverride('_method'));
-//seedDB();
-
-//PASSPORT CONFIGURATION
-app.use(require("express-session")({
-    secret: "Some seed!",
-    resave: false,
-    saveUninitialized: false
-}));
 
 app.use(function(req, res, next) {
     res.locals.currentUser = req.user;
@@ -41,7 +31,7 @@ app.use(function(req, res, next) {
 });
 
 app.use("/trips/:id/days", dayRoutes);
-app.use("/trips", tripRoutes); //all routes should start with /trips
+app.use("/trips", tripRoutes);
 app.use(authRoutes);
 
 app.listen(PORT, () => {
