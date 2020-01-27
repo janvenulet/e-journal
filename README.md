@@ -1,17 +1,11 @@
 # e-journal
 Web app for keeping online journal travel
 
-Used technologies: 
+## Used technologies: 
+*MongoDB
+*Node.js
+*Mongoose
+*Express.js
+*Bootstrap 3.7
 
-MongoDB
-
-Node.js
-
-Mongoose
-
-Express.js
-
-Bootstrap 3.7
-
-
-https://ejournal-pwr.herokuapp.com/
+[E-journal online preview!](https://ejournal-pwr.herokuapp.com/)
